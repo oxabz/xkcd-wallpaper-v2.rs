@@ -1078,6 +1078,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
 
 [[package]]
+name = "oxabz-xkcd-wallpaper"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "image",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "shuttle-service",
+ "tokio",
+ "warp",
+]
+
+[[package]]
 name = "parking_lot"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2322,19 +2337,4 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
 dependencies = [
  "winapi",
-]
-
-[[package]]
-name = "xkcd-wallpaper"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "image",
- "regex",
- "reqwest",
- "serde",
- "serde_json",
- "shuttle-service",
- "tokio",
- "warp",
 ]
