@@ -1,8 +1,19 @@
-[workspace]
+[package]
+name = "xkcd-wallpaper"
+version = "0.1.0"
+edition = "2021"
 
-members = [
-    "routes",
-    "server",
-    "service",
-    "wallpaper"
-]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+reqwest = {version = "0.11", features = ["json"]}
+anyhow = "1.0"
+image = "0.24.5"
+regex = "1.7"
+warp = "0.3"
+shuttle-service = { version = "0.7.2", features = ["web-warp"] }
+
+[dev-dependencies]
+tokio = { version = "1.20", features = ["full"] }

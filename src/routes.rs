@@ -1,23 +1,7 @@
 use warp::{Filter, filters::BoxedFilter};
-use xkcd_wallpaper::xkcd;
+use crate::xkcd;
+use crate::wallpaper;
 use serde::{Serialize, Deserialize};
-
-pub fn passthrough() -> BoxedFilter<(Vec<u8>,)>{
-    warp::path!("xkcd" / u64)
-        .and(warp::get())
-        .and_then(|id| async move {
-            let xkcd = xkcd::Xkcd::get(id).await;
-            let xkcd = match xkcd {
-                Ok(ok) => {ok},
-                Err(_err) => {
-                    return Err(warp::reject::reject());
-                },
-            };
-            let image = xkcd.get_image().await.unwrap();
-            Ok::<_, warp::Rejection>(image)
-        })
-        .boxed()
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct WallpaperParams{
@@ -68,7 +52,7 @@ pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)>{
                 pb,
                 pl,
             } = params;
-            let wallpaper = xkcd_wallpaper::wallpaper::generate_wallpaper_hex(image, &foreground, &background, (width, height), (pt, pr, pb, pl));
+            let wallpaper = wallpaper::generate_wallpaper_hex(image, &foreground, &background, (width, height), (pt, pr, pb, pl));
 
             return Ok::<_, warp::Rejection>(wallpaper);
         })
