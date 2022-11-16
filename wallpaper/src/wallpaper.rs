@@ -45,12 +45,12 @@ pub fn generate_wallpaper(img: Vec<u8>, foreground: image::Rgb<u8>, background: 
 
     let mut bytes: Vec<u8> = vec![];
     let mut writer = Cursor::new(&mut bytes);
-    target.write_to( &mut writer, ImageOutputFormat::Png);
+    target.write_to( &mut writer, ImageOutputFormat::Png).unwrap();
 
     return bytes
 }
 
-fn parseRGB(color: &str) -> image::Rgb<u8> {
+fn parse_rgb(color: &str) -> image::Rgb<u8> {
     let re = regex::Regex::new(r"^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$|^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])").unwrap();
     let caps = re.captures(color).unwrap();
 
@@ -73,11 +73,8 @@ fn parseRGB(color: &str) -> image::Rgb<u8> {
 
 pub fn generate_wallpaper_hex(img: Vec<u8>, foreground: &str, background: &str, size:(usize,usize), padding:(usize, usize, usize, usize)) -> Vec<u8> {
     // Convert the hex strings to rgb values
-    let foreground = parseRGB(foreground);
-    let background = parseRGB(background);
-
-    println!("{:?}", foreground);
-    println!("{:?}", background);
+    let foreground = parse_rgb(foreground);
+    let background = parse_rgb(background);
 
     return generate_wallpaper(img, foreground, background, size, padding);
 }
