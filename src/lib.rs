@@ -49,7 +49,7 @@ mod tests {
         let xkcd = xkcd::Xkcd::get(146).await.unwrap();
         let image =  xkcd.get_image().await.unwrap();
 
-        let wallpaper = wallpaper::generate_wallpaper_hex(image, "#E94B3CFF", "#2D2926", (1366, 768), (20, 20, 20, 20));
+        let wallpaper = wallpaper::generate_wallpaper_hex(image, "#E94B3C", "#2D2926", (1366, 768), (20, 20, 20, 20));
 
         File::create("test.png").unwrap().write_all(&wallpaper).unwrap();
     }
