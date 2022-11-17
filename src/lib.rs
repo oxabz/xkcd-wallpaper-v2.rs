@@ -13,7 +13,7 @@ async fn warp() -> shuttle_service::ShuttleWarp<(impl Reply,)> {
         .and(warp::get())
         .map(|name| format!("Hello, {}!", name));
     let route = hello.or(routes::wallpaper());
-    Ok(route.boxed())
+    Ok(route.with(warp::log("wallpaper::api")).boxed())
 }
 
 

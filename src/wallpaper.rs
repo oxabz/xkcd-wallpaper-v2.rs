@@ -17,11 +17,13 @@ pub fn generate_wallpaper(img: Vec<u8>, foreground: image::Rgb<u8>, background: 
 
     let img = img.resize(source_width as u32, source_height as u32, image::imageops::FilterType::Triangle);
 
+    let source_width = img.width() as usize;
+    let source_height = img.height() as usize;
+
     let target = image::ImageBuffer::from_fn(size.0 as u32, size.1 as u32, |x, y| {
         // check if x,y is in the image when centered in the target
         let source_x = x as i32 - (size.0 as i32 - source_width as i32) / 2;
         let source_y = y as i32 - (size.1 as i32 - source_height as i32) / 2;
-
 
         let pixel = if source_x >= 0 && source_x < source_width as i32 && source_y >= 0 && source_y < source_height as i32 {
             img.get_pixel(source_x as u32, source_y as u32)
@@ -51,7 +53,7 @@ pub fn generate_wallpaper(img: Vec<u8>, foreground: image::Rgb<u8>, background: 
 }
 
 fn parse_rgb(color: &str) -> image::Rgb<u8> {
-    let re = regex::Regex::new(r"^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$|^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])").unwrap();
+    let re = regex::Regex::new(r"^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$|^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])$").unwrap();
     let caps = re.captures(color).unwrap();
 
     let r = caps.get(1).or(caps.get(4)).unwrap();

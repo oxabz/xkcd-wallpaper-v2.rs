@@ -23,7 +23,7 @@ pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)>{
     warp::path!("wallpaper" / String)
         .and(warp::get())
         .and(warp::query::<WallpaperParams>())
-        .and_then(|id: String, params| async move {
+        .and_then(|id: String, params : WallpaperParams| async move {
             let xkcd = match id.as_str() {
                 "newest" => {
                     xkcd::Xkcd::get_newest().await
