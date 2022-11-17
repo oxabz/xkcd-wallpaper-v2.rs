@@ -17,13 +17,9 @@ async fn warp() -> shuttle_service::ShuttleWarp<(impl Reply,)> {
 }
 
 
-
+/*
 #[cfg(test)]
 mod tests {
-    use std::{fs::File, io::Write};
-
-    use crate::wallpaper;
-
     use super::xkcd;
 
     #[tokio::test]
@@ -44,6 +40,7 @@ mod tests {
         assert!(xkcd.is_ok());
     }
 
+    /*
     #[tokio::test]
     async fn test_wallpaper() {
         let xkcd = xkcd::Xkcd::get(146).await.unwrap();
@@ -52,5 +49,5 @@ mod tests {
         let _wallpaper = wallpaper::generate_wallpaper_hex(image, "#E94B3C", "#2D2926", (1366, 768), (20, 20, 20, 20));
 
         //File::create("test.png").unwrap().write_all(&wallpaper).unwrap();
-    }
-}
+    }*/
+}*/
