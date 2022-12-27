@@ -15,6 +15,3 @@ regex = "1.7"
 warp = "0.3"
 shuttle-service = { version = "^0.7", features = ["web-warp"] }
 log = "0.4"
-
-[dev-dependencies]
-tokio = { version = "1.20", features = ["full"] }
