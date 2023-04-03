@@ -27,7 +27,10 @@ pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)> {
         .and_then(|id: String, params: WallpaperParams| async move {
             let xkcd = match id.as_str() {
                 "newest" => xkcd::Xkcd::get_newest().await,
-                _ => xkcd::Xkcd::get(id.parse::<u64>().map_err(|_err| Error::InvalidXkcdId(id))?).await,
+                _ => {
+                    xkcd::Xkcd::get(id.parse::<u64>().map_err(|_err| Error::InvalidXkcdId(id))?)
+                        .await
+                }
             }?;
 
             let image = xkcd.get_image().await?;
