@@ -66,7 +66,7 @@ pub fn generate_wallpaper(
         .write_to(&mut writer, ImageOutputFormat::Png)
         .unwrap();
 
-    return bytes;
+    bytes
 }
 
 fn parse_rgb(color: &str) -> Result<image::Rgb<u8>, Error> {
@@ -101,7 +101,7 @@ fn parse_rgb(color: &str) -> Result<image::Rgb<u8>, Error> {
         b *= 17;
     }
 
-    return Ok(image::Rgb([r, g, b]));
+    Ok(image::Rgb([r, g, b]))
 }
 
 pub fn generate_wallpaper_hex(
@@ -115,7 +115,7 @@ pub fn generate_wallpaper_hex(
     let foreground = parse_rgb(foreground)?;
     let background = parse_rgb(background)?;
 
-    return Ok(generate_wallpaper(
+    Ok(generate_wallpaper(
         img, foreground, background, size, padding,
-    ));
+    ))
 }

@@ -54,7 +54,7 @@ pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)> {
                 (pt, pr, pb, pl),
             )?;
 
-            return Ok::<_, warp::Rejection>(wallpaper);
+            Ok::<_, warp::Rejection>(wallpaper)
         })
         .boxed()
 }
