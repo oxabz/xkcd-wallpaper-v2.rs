@@ -1,3 +1,4 @@
+use crate::error::Error;
 use crate::wallpaper;
 use crate::xkcd;
 use serde::{Deserialize, Serialize};
@@ -37,17 +38,10 @@ pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)> {
         .and_then(|id: String, params: WallpaperParams| async move {
             let xkcd = match id.as_str() {
                 "newest" => xkcd::Xkcd::get_newest().await,
-                _ => xkcd::Xkcd::get(id.parse::<u64>().unwrap()).await,
-            };
+                _ => xkcd::Xkcd::get(id.parse::<u64>().map_err(|_err| Error::InvalidXkcdId(id))?).await,
+            }?;
 
-            let xkcd = match xkcd {
-                Ok(ok) => ok,
-                Err(_err) => {
-                    return Err(warp::reject::reject());
-                }
-            };
-
-            let image = xkcd.get_image().await.unwrap();
+            let image = xkcd.get_image().await?;
 
             let WallpaperParams {
                 foreground,
@@ -59,19 +53,14 @@ pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)> {
                 pb,
                 pl,
             } = params;
-            let wallpaper = match wallpaper::generate_wallpaper_hex(
+
+            let wallpaper = wallpaper::generate_wallpaper_hex(
                 image,
                 &foreground,
                 &background,
                 (width, height),
                 (pt, pr, pb, pl),
-            ) {
-                Ok(ok) => ok,
-                Err(err) => {
-                    eprintln!("{:?}", err);
-                    return Err(warp::reject::custom(AnyhowReject(err)));
-                }
-            };
+            )?;
 
             return Ok::<_, warp::Rejection>(wallpaper);
         })
