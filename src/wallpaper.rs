@@ -1,6 +1,13 @@
 use image::{self, GenericImageView, Rgb, ImageOutputFormat};
 use std::io::Cursor;
 use regex;
+use thiserror::Error;
+
+#[derive(Debug, Clone, Error)]
+pub enum Error{
+    #[error("Invalid color: {0}")]
+    ColorParseError(String),
+}
 
 pub fn generate_wallpaper(img: Vec<u8>, foreground: image::Rgb<u8>, background: image::Rgb<u8>, size:(usize,usize), padding:(usize, usize, usize, usize)) -> Vec<u8> {
     let img = image::load_from_memory(&img).unwrap();
@@ -52,17 +59,17 @@ pub fn generate_wallpaper(img: Vec<u8>, foreground: image::Rgb<u8>, background: 
     return bytes
 }
 
-fn parse_rgb(color: &str) -> image::Rgb<u8> {
-    let re = regex::Regex::new(r"^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$|^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])$").unwrap();
-    let caps = re.captures(color).unwrap();
+fn parse_rgb(color: &str) -> anyhow::Result<image::Rgb<u8>> {
+    let re = regex::Regex::new(r"^#?([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$|^#?([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])$")?;
+    let caps = re.captures(color).ok_or(Error::ColorParseError(color.to_string()))?;
 
-    let r = caps.get(1).or(caps.get(4)).unwrap();
-    let g = caps.get(2).or(caps.get(5)).unwrap();
-    let b = caps.get(3).or(caps.get(6)).unwrap();
+    let r = caps.get(1).or(caps.get(4)).ok_or(Error::ColorParseError(color.to_string()))?;
+    let g = caps.get(2).or(caps.get(5)).ok_or(Error::ColorParseError(color.to_string()))?;
+    let b = caps.get(3).or(caps.get(6)).ok_or(Error::ColorParseError(color.to_string()))?;
 
-    let mut r = u8::from_str_radix(r.as_str(), 16).unwrap();
-    let mut g = u8::from_str_radix(g.as_str(), 16).unwrap();
-    let mut b = u8::from_str_radix(b.as_str(), 16).unwrap();
+    let mut r = u8::from_str_radix(r.as_str(), 16)?;
+    let mut g = u8::from_str_radix(g.as_str(), 16)?;
+    let mut b = u8::from_str_radix(b.as_str(), 16)?;
 
     if caps.get(4).is_some() {
         r *= 17;
@@ -70,13 +77,13 @@ fn parse_rgb(color: &str) -> image::Rgb<u8> {
         b *= 17;
     }
 
-    return image::Rgb([r, g, b]);
+    return Ok(image::Rgb([r, g, b]));
 }
 
-pub fn generate_wallpaper_hex(img: Vec<u8>, foreground: &str, background: &str, size:(usize,usize), padding:(usize, usize, usize, usize)) -> Vec<u8> {
+pub fn generate_wallpaper_hex(img: Vec<u8>, foreground: &str, background: &str, size:(usize,usize), padding:(usize, usize, usize, usize)) -> anyhow::Result<Vec<u8>> {
     // Convert the hex strings to rgb values
-    let foreground = parse_rgb(foreground);
-    let background = parse_rgb(background);
+    let foreground = parse_rgb(foreground)?;
+    let background = parse_rgb(background)?;
 
-    return generate_wallpaper(img, foreground, background, size, padding);
+    return Ok(generate_wallpaper(img, foreground, background, size, padding));
 }

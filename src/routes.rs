@@ -19,6 +19,17 @@ struct WallpaperParams {
     pub pl: usize,
 }
 
+#[derive(Debug)]
+pub(crate) struct AnyhowReject(pub(crate)  anyhow::Error);
+
+impl From<anyhow::Error> for AnyhowReject {
+    fn from(err: anyhow::Error) -> Self {
+        Self(err)
+    }
+}
+
+impl warp::reject::Reject for AnyhowReject {}
+
 pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)> {
     warp::path!("wallpaper" / String)
         .and(warp::get())
@@ -48,13 +59,19 @@ pub fn wallpaper() -> BoxedFilter<(Vec<u8>,)> {
                 pb,
                 pl,
             } = params;
-            let wallpaper = wallpaper::generate_wallpaper_hex(
+            let wallpaper = match wallpaper::generate_wallpaper_hex(
                 image,
                 &foreground,
                 &background,
                 (width, height),
                 (pt, pr, pb, pl),
-            );
+            ) {
+                Ok(ok) => ok,
+                Err(err) => {
+                    eprintln!("{:?}", err);
+                    return Err(warp::reject::custom(AnyhowReject(err)));
+                }
+            };
 
             return Ok::<_, warp::Rejection>(wallpaper);
         })
